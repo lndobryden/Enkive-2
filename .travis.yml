@@ -2,6 +2,9 @@ language: java
 jdk:
   - oraclejdk8
 
+before_install:
+  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.4.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.4.deb
+
 services:
   - elasticsearch
   - rabbitmq
