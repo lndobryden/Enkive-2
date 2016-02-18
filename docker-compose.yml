@@ -1,0 +1,12 @@
+elasticsearch:
+  build: elasticsearch/
+  container_name: enkive-elasticsearch
+  ports:
+   - "9200:9200"
+   - "9300:9300"
+
+rabbitmq:
+  image: rabbitmq
+  container_name: enkive-rabbitmq
+  ports:
+    - "5672:5672"
