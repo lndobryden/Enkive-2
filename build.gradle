@@ -16,7 +16,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'demo'
+    baseName = 'enkive'
     version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -41,6 +41,8 @@ dependencies {
     compile('org.projectlombok:lombok:1.16.6')
     compile('org.springframework.boot:spring-boot-starter-remote-shell')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.apache.james:apache-mime4j:0.7.2')
+    compile('commons-io:commons-io:2.4')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
