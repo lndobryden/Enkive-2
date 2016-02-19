@@ -14,11 +14,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
-
-plugins {
-    id "jacoco"
-    id "com.github.kt3k.coveralls" version "2.5.0"
-}
+apply plugin: 'jacoco'
 
 jar {
     baseName = 'demo'
@@ -61,9 +57,11 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
 }
 
+check.dependsOn jacocoTestReport
+
 jacocoTestReport {
     reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
+        xml.enabled = true
         html.enabled = true
     }
 }
