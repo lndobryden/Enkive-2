@@ -19,18 +19,22 @@
  *******************************************************************************/
 package com.linuxbox.enkive.message;
 
+import difflib.DiffUtils;
+import difflib.Patch;
+import difflib.PatchFailedException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.james.mime4j.MimeException;
 import org.apache.james.mime4j.MimeIOException;
 import org.apache.james.mime4j.stream.EntityState;
+import org.apache.james.mime4j.stream.Field;
 import org.apache.james.mime4j.stream.MimeConfig;
 import org.apache.james.mime4j.stream.RecursionMode;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.List;
 import java.util.Stack;
 
 
@@ -44,14 +48,13 @@ public class EnkiveMessageParser {
 		// Set a config that is as lenient as possible
 		// We want to parse all messages that come through,
 		// not throw out any that do not adhere to standards
-		config = new MimeConfig();
-		config.setStrictParsing(false);
-		config.setMaxLineLen(-1);
-		config.setMaxContentLen(-1);
-		config.setMaxHeaderCount(-1);
-		config.setMaxHeaderLen(-1);
-		config.setMalformedHeaderStartsBody(true);
 
+		config = new MimeConfig.Builder().setStrictParsing(false)
+				.setMaxLineLen(-1)
+				.setMaxContentLen(-1)
+				.setMaxHeaderCount(-1)
+				.setMaxHeaderLen(-1)
+		.build();
 	}
 
 	/**
@@ -65,11 +68,16 @@ public class EnkiveMessageParser {
 	 *            Constructs a com.linuxbox.enkive.message object from a raw
 	 *            email message InputStream
 	 */
-	public EnkiveMessage ConstructMessage(InputStream in) {
+	public EnkiveMessage constructMessage(BufferedInputStream in) throws IOException, PatchFailedException {
 
-		try {
 
-			Stack<EnkiveMessagePartMulti> headerStack = new Stack<EnkiveMessagePartMulti>();
+		File originalMessage = File.createTempFile("EnkiveRawMessage", "eml");
+
+		FileUtils.copyInputStreamToFile(in, originalMessage);
+
+		BufferedInputStream in2 = new BufferedInputStream(FileUtils.openInputStream(originalMessage));
+
+		Stack<EnkiveMessagePartMulti> headerStack = new Stack<EnkiveMessagePartMulti>();
 			EnkiveMessagePartMulti mp;
 			StringBuilder headers = new StringBuilder();
 			boolean messageHeadersParsed = false;
@@ -83,10 +91,13 @@ public class EnkiveMessageParser {
 
 
 			final MessageStreamParser stream = new MessageStreamParser(config);
+			//TODO This should be set to recurse eventually
+			//The message model currently won't handle that
 			stream.setRecursionMode(RecursionMode.M_NO_RECURSE);
 
-			stream.parse(in);
+			stream.parse(in2);
 
+		try {
 			for (EntityState state = stream.getState(); state != EntityState.T_END_OF_STREAM; state = stream
 					.next()) {
 				switch (state) {
@@ -99,7 +110,9 @@ public class EnkiveMessageParser {
 
 					// Append each header field to the local header variable
 					case T_FIELD:
-						headers.append(stream.getField());
+						Field field = stream.getField();
+						String fieldString = field.toString();
+						headers.append(fieldString);
 						headers.append(lineEnding);
 						break;
 
@@ -129,32 +142,17 @@ public class EnkiveMessageParser {
 					// the top of the stack, set it, and push back on the stack
 					case T_PREAMBLE:
 
-						BufferedReader reader = new BufferedReader(
-								stream.getReader());
-
-						String tempString;
-						String preamble = "";
-						while ((tempString = reader.readLine()) != null) {
-							preamble += tempString + lineEnding;
-						}
 						mp = headerStack.pop();
-						mp.setPreamble(preamble);
+						mp.setPreamble(IOUtils.toString(stream.getInputStream()));
 						headerStack.push(mp);
 						break;
 
 					// If there's an epilogue, get the multipartheader off
 					// the top of the stack, set it, and push back on the stack
 					case T_EPILOGUE:
-						BufferedReader epilogueReader = new BufferedReader(
-								stream.getReader());
 
-						String tempEpilogueString;
-						String epilogue = "";
-						while ((tempEpilogueString = epilogueReader.readLine()) != null) {
-							epilogue += tempEpilogueString + lineEnding;
-						}
 						mp = headerStack.pop();
-						mp.setEpilogue(epilogue);
+						mp.setEpilogue(IOUtils.toString(stream.getInputStream()));
 						headerStack.push(mp);
 						break;
 
@@ -165,7 +163,9 @@ public class EnkiveMessageParser {
 						single.setLineEnding(lineEnding);
 						final String transferEncoding = stream.getBodyDescriptor()
 								.getTransferEncoding();
-						single.setContent(IOUtils.toString(stream.getInputStream()));
+
+						String messageBody = IOUtils.toString(stream.getInputStream());
+						single.setContent(messageBody);
 
 						single.setContentTransferEncoding(transferEncoding);
 
@@ -201,12 +201,26 @@ public class EnkiveMessageParser {
 						break;
 				} // switch
 			} // for
-
-			return enkiveMessage;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException|MimeException e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtils.closeQuietly(in2);
 		}
-		return null;
+
+
+		File rebuiltMessage = File.createTempFile("EnkiveRebuiltMessage", "eml");
+
+		FileUtils.writeStringToFile(rebuiltMessage, enkiveMessage.getReconstructedMessage());
+
+		List<String> rebuiltLines = FileUtils.readLines(rebuiltMessage);
+		List<String> originalLines = FileUtils.readLines(originalMessage);
+
+		Patch<String> diff = DiffUtils.diff(rebuiltLines, originalLines);
+
+		enkiveMessage.setPatch(diff);
+
+		return enkiveMessage;
+
 	}
 
 }

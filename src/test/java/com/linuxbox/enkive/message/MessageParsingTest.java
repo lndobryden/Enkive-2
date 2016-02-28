@@ -2,6 +2,7 @@ package com.linuxbox.enkive.message;
 
 import com.google.common.io.CharStreams;
 import com.linuxbox.enkive.TestingConstants;
+import difflib.PatchFailedException;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,10 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.mail.MessagingException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
@@ -47,10 +45,10 @@ public class MessageParsingTest {
 
 
     @Test
-    public void parseMessage() throws IOException, MessagingException {
+    public void parseMessage() throws IOException, MessagingException, PatchFailedException {
 
         FileInputStream inputStream = new FileInputStream(testFile);
-        EnkiveMessage testMessage = parser.ConstructMessage(inputStream);
+        EnkiveMessage testMessage = parser.constructMessage(new BufferedInputStream(inputStream));
         inputStream.close();
 
         FileReader equalityReader = new FileReader(testFile);

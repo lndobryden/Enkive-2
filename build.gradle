@@ -26,6 +26,7 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven {url 'http://repo.spring.io/libs-snapshot'}
+    maven { url 'http://repository.jboss.org/nexus/content/groups/public'}
 }
 
 dependencies {
@@ -42,8 +43,9 @@ dependencies {
     compile('org.projectlombok:lombok:1.16.6')
     compile('org.springframework.boot:spring-boot-starter-remote-shell')
     compile('org.springframework.boot:spring-boot-starter-security')
-    compile('org.apache.james:apache-mime4j:0.7.2')
+    compile('org.apache.james:apache-mime4j:0.8.0-SNAPSHOT')
     compile('commons-io:commons-io:2.4')
+    compile('com.googlecode.java-diff-utils:diffutils:1.3.0')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
