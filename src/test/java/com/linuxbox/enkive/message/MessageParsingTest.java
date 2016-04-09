@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import javax.mail.MessagingException;
 import java.io.*;
 import java.util.Collection;
 
@@ -45,7 +44,7 @@ public class MessageParsingTest {
 
 
     @Test
-    public void parseMessage() throws IOException, MessagingException, PatchFailedException {
+    public void parseMessage() throws IOException, PatchFailedException {
 
         FileInputStream inputStream = new FileInputStream(testFile);
         EnkiveMessage testMessage = parser.constructMessage(new BufferedInputStream(inputStream));
