@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '1.3.1.RELEASE'
+        springBootVersion = '1.3.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -17,7 +17,7 @@ apply plugin: 'spring-boot'
 apply plugin: 'jacoco'
 
 jar {
-    baseName = 'demo'
+    baseName = 'enkive'
     version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -26,22 +26,22 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven {url 'http://repo.spring.io/libs-snapshot'}
+    maven { url 'http://repository.jboss.org/nexus/content/groups/public'}
 }
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-actuator-docs')
     compile('org.springframework.boot:spring-boot-starter-amqp')
-    compile('org.springframework.boot:spring-boot-starter-data-rest')
-    compile('org.springframework.data:spring-data-rest-hal-browser')
-    compile('org.springframework.data:spring-data-commons:1.12.0.BUILD-SNAPSHOT')
-    compile('org.springframework.data:spring-data-elasticsearch:1.4.0.BUILD-SNAPSHOT')
-    compile('org.springframework.boot:spring-boot-devtools')
-    compile('org.springframework.boot:spring-boot-starter-hateoas')
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.projectlombok:lombok:1.16.6')
-    compile('org.springframework.boot:spring-boot-starter-remote-shell')
     compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-hateoas')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.data:spring-data-commons:1.12.0.BUILD-SNAPSHOT')
+    compile('org.springframework.data:spring-data-elasticsearch:1.4.0.M1')
+    compile('org.elasticsearch:elasticsearch:1.7.4')
+    compile('org.projectlombok:lombok:1.16.6')
+    compile('org.apache.james:apache-mime4j:0.8.0-SNAPSHOT')
+    compile('commons-io:commons-io:2.4')
+    compile('com.googlecode.java-diff-utils:diffutils:1.3.0')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
