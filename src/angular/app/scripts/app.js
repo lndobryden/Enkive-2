@@ -15,7 +15,8 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'spring-data-rest'
   ])
   .config(function ($routeProvider) {
     $routeProvider
