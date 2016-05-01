@@ -10,7 +10,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableElasticsearchRepositories(basePackages = "com/linuxbox/enkive")
 @EnableScheduling
 public class EnkiveApplication {
 

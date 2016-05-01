@@ -2,6 +2,7 @@ package com.linuxbox.enkive.message;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Data
 @JsonTypeName("multi")
+@EqualsAndHashCode(callSuper=false)
 public class EnkiveMessagePartMulti extends EnkiveMessagePart {
 
     @Field(type = FieldType.String, store = true)

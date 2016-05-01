@@ -1,5 +1,6 @@
 package com.linuxbox.enkive.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import difflib.DiffUtils;
 import difflib.Patch;
 import difflib.PatchFailedException;
@@ -37,7 +38,7 @@ public class EnkiveMessage {
 
     private String lineSeparator= IOUtils.LINE_SEPARATOR;
 
-    private Patch<String> patch;
+    private List<String> patch;
 
     public EnkiveMessage() {
 
@@ -54,8 +55,10 @@ public class EnkiveMessage {
 
         List<String> strings = FileUtils.readLines(rebuiltMessage);
         List<String> rebuilt = strings;
-        if(patch != null)
-            rebuilt = DiffUtils.patch(strings, patch);
+        if(patch != null) {
+            Patch<String> diffUtilsPatch = DiffUtils.parseUnifiedDiff(patch);
+            rebuilt = DiffUtils.patch(strings, diffUtilsPatch);
+        }
 
         return StringUtils.join(rebuilt, IOUtils.LINE_SEPARATOR);
     }

@@ -1,5 +1,5 @@
 elasticsearch:
-  build: elasticsearch/
+  image: elasticsearch:2.2.2
   container_name: enkive-elasticsearch
   ports:
    - "9200:9200"

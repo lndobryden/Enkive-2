@@ -2,6 +2,7 @@ package com.linuxbox.enkive.message;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -11,6 +12,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
  */
 @Data
 @JsonTypeName("single")
+@EqualsAndHashCode(callSuper=false)
 public class EnkiveMessagePartSingle extends EnkiveMessagePart {
 
     @Field(type = FieldType.Attachment, store = true, searchAnalyzer = "english")

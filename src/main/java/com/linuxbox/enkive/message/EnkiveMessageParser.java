@@ -177,8 +177,9 @@ public class EnkiveMessageParser {
 							mp = headerStack.pop();
 							mp.addMessagePart(single);
 							headerStack.push(mp);
-						} else
+						} else {
 							enkiveMessage.setMessageBody(single);
+						}
 						break;
 
 					// If we've reached the end of a multipart, it could
@@ -207,7 +208,7 @@ public class EnkiveMessageParser {
 			IOUtils.closeQuietly(in2);
 		}
 
-
+		//TODO Need more efficient way of generating message diffs...
 		File rebuiltMessage = File.createTempFile("EnkiveRebuiltMessage", "eml");
 
 		FileUtils.writeStringToFile(rebuiltMessage, enkiveMessage.getReconstructedMessage());
@@ -216,8 +217,9 @@ public class EnkiveMessageParser {
 		List<String> originalLines = FileUtils.readLines(originalMessage);
 
 		Patch<String> diff = DiffUtils.diff(rebuiltLines, originalLines);
-
-		enkiveMessage.setPatch(diff);
+		List<String> unifiedDiff = DiffUtils.generateUnifiedDiff(FileUtils.readFileToString(originalMessage), enkiveMessage.getReconstructedMessage(),
+				originalLines, diff, 0);
+		enkiveMessage.setPatch(unifiedDiff);
 
 		return enkiveMessage;
 
