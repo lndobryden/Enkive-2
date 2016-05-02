@@ -86,6 +86,7 @@ grunt_build.dependsOn 'installGrunt'
 grunt_build.dependsOn 'npmInstall'
 grunt_build.dependsOn 'grunt_bower_install'
 grunt_bower_install.dependsOn 'installGrunt'
+grunt_bower_install.dependsOn 'npmInstall'
 
 build.dependsOn copyDist
 clean.dependsOn cleanDist
