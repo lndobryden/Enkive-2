@@ -5,9 +5,12 @@ buildscript {
     repositories {
         mavenCentral()
         maven {url 'http://repo.spring.io/libs-snapshot'}
+        maven {url 'https://plugins.gradle.org/m2/'}
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath ('com.moowork.gradle:gradle-node-plugin:0.12')
+        classpath ('com.moowork.gradle:gradle-grunt-plugin:0.12')
     }
 }
 
@@ -16,6 +19,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'jacoco'
+apply plugin: 'com.moowork.grunt'
 
 jar {
     baseName = 'enkive'
@@ -51,9 +55,36 @@ eclipse {
     }
 }
 
+grunt {
+    workDir = file("src/angular")
+    colors = true
+    bufferOutput = false
+}
+
+node {
+    version = '4.4.3'
+    download = true
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
 }
+
+//Generate dist here
+
+task copyDist(type: Copy) {
+    dependsOn grunt_build
+    from 'src/angular/dist'
+    into 'src/main/resources/angular'
+}
+
+task cleanDist(type: Delete) {
+    delete 'src/main/resources/angular'
+}
+grunt_build.dependsOn 'installGrunt'
+grunt_build.dependsOn 'npmInstall'
+build.dependsOn copyDist
+clean.dependsOn cleanDist
 
 task stage {
     dependsOn build
