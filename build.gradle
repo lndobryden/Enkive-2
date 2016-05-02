@@ -64,6 +64,12 @@ grunt {
 node {
     version = '4.4.3'
     download = true
+
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}/")
 }
 
 task wrapper(type: Wrapper) {
