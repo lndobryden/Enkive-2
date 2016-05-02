@@ -449,6 +449,22 @@ module.exports = function (grunt) {
         'svgmin'
       ]
     },
+    "bower-install-simple": {
+      options: {
+        color: true,
+        directory: "bower_components"
+      },
+      "prod": {
+        options: {
+          production: true
+        }
+      },
+      "dev": {
+        options: {
+          production: false
+        }
+      }
+    },
 
     // Test settings
     karma: {
@@ -513,4 +529,5 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+  grunt.registerTask("bower_install", [ "bower-install-simple" ]);
 };

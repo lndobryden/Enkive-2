@@ -84,6 +84,15 @@ task cleanDist(type: Delete) {
 }
 grunt_build.dependsOn 'installGrunt'
 grunt_build.dependsOn 'npmInstall'
+
+// run 'grunt bower_install'
+grunt_bower_install.dependsOn 'installGrunt'
+grunt_bower_install.dependsOn 'npmInstall'
+grunt_default.dependsOn grunt_bower_install
+
+// runs "grunt default" as part of your gradle build
+build.dependsOn grunt_default
+
 build.dependsOn copyDist
 clean.dependsOn cleanDist
 
