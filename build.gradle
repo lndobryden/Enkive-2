@@ -61,12 +61,6 @@ grunt {
     bufferOutput = false
 }
 
-node {
-    version = '4.4.3'
-    npmVersion = '3.8.8'
-    download = true
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
 }
@@ -82,10 +76,8 @@ task copyDist(type: Copy) {
 task cleanDist(type: Delete) {
     delete 'src/main/resources/angular'
 }
-grunt_build.dependsOn 'installGrunt'
 grunt_build.dependsOn 'npmInstall'
 grunt_build.dependsOn 'grunt_bower_install'
-grunt_bower_install.dependsOn 'installGrunt'
 grunt_bower_install.dependsOn 'npmInstall'
 
 build.dependsOn copyDist
