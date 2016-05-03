@@ -70,20 +70,16 @@ task wrapper(type: Wrapper) {
 task copyDist(type: Copy) {
     dependsOn grunt_build
     from 'src/angular/dist'
-    into 'src/main/resources/angular'
+    into 'build/resources/main/angular'
 }
 
-task cleanDist(type: Delete) {
-    delete 'src/main/resources/angular'
-}
 grunt_build.dependsOn 'installGrunt'
 grunt_build.dependsOn 'npmInstall'
 grunt_build.dependsOn 'grunt_bower_install'
 grunt_bower_install.dependsOn 'installGrunt'
 grunt_bower_install.dependsOn 'npmInstall'
 
-build.dependsOn copyDist
-clean.dependsOn cleanDist
+processResources.dependsOn copyDist
 
 task stage {
     dependsOn build

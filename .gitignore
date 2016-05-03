@@ -17,4 +17,3 @@ build/
 
 # Angular files
 node_modules/
-src/main/resources/angular/
