@@ -4,6 +4,7 @@ jdk:
 
 before_script:
   - pip install --user codecov
+  - bundle install
 
 before_install:
   - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.4.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.4.deb
